@@ -214,7 +214,33 @@ describe("trusted transcript records", () => {
       ts: "January 1, 2026 00:00:00",
     });
     expect(() => parseTranscriptExport(BOARD, withoutTimezone)).toThrow(/timezone-qualified/);
-    expect(() => parseTranscriptExport(BOARD, localeTimestamp)).toThrow(/timezone-qualified/);
+    expect(() => parseTranscriptExport(BOARD, localeTimestamp)).toThrow(/timezone-qualified/)
+    const impossibleDate = JSON.stringify({
+      ...JSON.parse(raw),
+      ts: "2026-02-31T00:00:00Z",
+    });
+    const impossibleDates = [
+      "2026-02-29T00:00:00Z",
+      "2026-04-31T00:00:00+01:00",
+    ];
+
+    for (const ts of impossibleDates) {
+      const invalidDate = JSON.stringify({
+        ...JSON.parse(raw),
+        ts,
+      });
+
+      expect(() => parseTranscriptExport(BOARD, invalidDate)).toThrow(/timestamp/i);
+    }
+
+    const validLeapDay = JSON.stringify({
+      ...JSON.parse(raw),
+      ts: "2024-02-29T00:00:00Z",
+    });
+
+    expect(() => parseTranscriptExport(BOARD, validLeapDay)).not.toThrow();
+
+    expect(() => parseTranscriptExport(BOARD, impossibleDate)).toThrow(/timestamp/i);
   });
 
   it("never synthesizes offer-before-accept order while selecting a board handshake", () => {
