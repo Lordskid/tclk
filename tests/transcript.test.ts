@@ -222,6 +222,7 @@ describe("trusted transcript records", () => {
     const impossibleDates = [
       "2026-02-29T00:00:00Z",
       "2026-04-31T00:00:00+01:00",
+      "1900-02-29T00:00:00Z",
     ];
 
     for (const ts of impossibleDates) {
@@ -237,8 +238,13 @@ describe("trusted transcript records", () => {
       ...JSON.parse(raw),
       ts: "2024-02-29T00:00:00Z",
     });
+    const validCenturyLeapDay = JSON.stringify({
+      ...JSON.parse(raw),
+      ts: "2000-02-29T00:00:00Z",
+    });
 
     expect(() => parseTranscriptExport(BOARD, validLeapDay)).not.toThrow();
+    expect(() => parseTranscriptExport(BOARD, validCenturyLeapDay)).not.toThrow();
 
     expect(() => parseTranscriptExport(BOARD, impossibleDate)).toThrow(/timestamp/i);
   });

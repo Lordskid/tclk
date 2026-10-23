@@ -150,9 +150,9 @@ export function transcriptRecord(room: string, value: unknown): TranscriptRecord
     throw new Error("tclk: transcript message seq must be a non-negative safe integer");
   }
   if (typeof message.ts !== "string") throw new Error("tclk: transcript message has no timestamp");
-if (!TIMESTAMP.test(message.ts) || !hasValidCalendarDate(message.ts)) {
-  throw new Error("tclk: transcript message timestamp must be a valid timezone-qualified RFC 3339 timestamp");
-}
+  if (!TIMESTAMP.test(message.ts) || !hasValidCalendarDate(message.ts)) {
+    throw new Error("tclk: transcript message timestamp must be a valid timezone-qualified RFC 3339 timestamp");
+  }
   const timestampMs = Date.parse(message.ts);
   if (!Number.isSafeInteger(timestampMs) || timestampMs < 0) {
     throw new Error("tclk: transcript message timestamp is invalid");
